@@ -23,7 +23,7 @@ display.Configure(st7789.Config{
 ### I8080 interface
 The ESP32-S3 used by the T-Display S3 has a built-in hardware component for addressing I8080 displays (called LCD_CAM), but i have not found nor written a tinygo driver for this yet. If you're not doing animation, playing video or need fast display updates, a simple software I8088 implementation along with a framebuffer on the esp32 works fine. This setup can achieve full screen updates in about 1/3 of a second.
 
-The ST7789 driver is built to work with the ST7789 over SPI (it can do SPI and I8080) and thus wants something implementing drivers.SPI. I have written a very simple "bit-banged" I8080 implementation [in here](https://github.com/axellse/tdisplays3-tinygo/tree/main/i8080) ([pkg.go.dev](https://pkg.go.dev/github.com/axellse/tdisplays3-tinygo/i8080)). It can be configured like so:
+The ST7789 driver is built to work with the ST7789 over SPI (it can do SPI and I8080) and thus wants something implementing drivers.SPI. I have written a very simple "bit-banged" I8080 implementation [in here](https://pkg.go.dev/github.com/axellse/tdisplays3-tinygo/i8080). It can be configured like so:
 ```go
 iface := i8080.SoftSPI{
 	WRPin:    machine.GPIO8,
