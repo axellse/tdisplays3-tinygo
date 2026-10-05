@@ -1,4 +1,5 @@
-package spii8080bitbang
+//i8080 contains an Intel 8080 interface (a.k.a. "I8080", "I80" and "8 bit parallel").
+package i8080
 
 import (
 	"errors"

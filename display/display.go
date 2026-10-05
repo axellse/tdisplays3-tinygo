@@ -1,3 +1,4 @@
+//display is an easy to use package for working with the built-in screen on the T-Display S3. This package handles everything and gives you a simple Display type you can work with and use with tinygo's graphics libraries (tinyfont, tinydraw). 
 package display
 
 import (
@@ -10,20 +11,24 @@ import (
 	"tinygo.org/x/drivers/st7789"
 )
 
+//Display is a T-Display S3-like display
 type Display struct {
 	disp st7789.Device
 	buf pixel.Image[pixel.RGB565BE]
 }
 
+//Size returns the display size, 320 by 170.
 func (d *Display) Size() (width, height int16) {
 	return 320,170
 }
 
+//Display copies the framebuffer to the display.
 func (d *Display) Display() error {
 	d.disp.DrawBitmap(0,0, d.buf)
 	return nil
 }
 
+//SetPixel sets a pixel in the framebuffer.
 func (d *Display) SetPixel(x, y int16, c color.RGBA) {
 	w, h := d.Size()
 	if x >= w || y >= h {
@@ -33,9 +38,13 @@ func (d *Display) SetPixel(x, y int16, c color.RGBA) {
 	d.buf.Set(int(x), int(y), pixel.NewColor[pixel.RGB565BE](c.R, c.B, c.B))
 }
 
-func Init() *Display {
-	machine.GPIO15.Configure(machine.PinConfig{Mode: machine.PinOutput})
+//Init initializes the board's display and returns a [Display] object, or an error.
+func Init() (*Display, error) {
+	machine.GPIO15.Configure(machine.PinConfig{
+		Mode: machine.PinOutput,
+	})
 	machine.GPIO15.High()
+
 	iface := i8080.SoftSPI{
 		WRPin:    machine.GPIO8,
 		RDPin:    machine.GPIO9,
@@ -44,7 +53,7 @@ func Init() *Display {
 
 	err := iface.Init()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	display := st7789.New(iface, machine.GPIO5, machine.GPIO7, machine.GPIO6, machine.GPIO38)
@@ -59,5 +68,5 @@ func Init() *Display {
 	return &Display{
 		disp: display,
 		buf: pixel.NewImage[pixel.RGB565BE](320, 170),
-	}
+	}, nil
 }
